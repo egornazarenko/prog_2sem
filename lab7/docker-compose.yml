@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres_logs:
+    image: postgres:15
+    container_name: postgres_logs
+    environment:
+      POSTGRES_DB: logs_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_logs_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres_data:
+    image: postgres:15
+    container_name: postgres_data
+    environment:
+      POSTGRES_DB: data_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_logs_data:
+  postgres_data_data:
+
+networks:
+  app_network:
+    driver: bridge
